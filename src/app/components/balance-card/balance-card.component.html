@@ -1,0 +1,58 @@
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h5 class="card-title mb-3">Saldos (USD & minutos)</h5>
+
+    <!-- Loading -->
+    <ng-container *ngIf="summary.loading$ | async; else loaded">
+      <div class="d-flex align-items-center text-muted">
+        <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+        Cargando...
+      </div>
+    </ng-container>
+
+    <!-- Contenido o No datos -->
+    <ng-template #loaded>
+      <ng-container *ngIf="(summary.summary$ | async) as s; else noData">
+        <div class="mb-2"><strong>Cliente:</strong> {{ s.name }}</div>
+        <div class="mb-2"><strong>Número:</strong> {{ s.phone_number }}</div>
+        <div class="mb-2"><strong>Tipo:</strong> {{ s.product_type }}</div>
+
+        <div class="row g-3 mt-3">
+          <div class="col-12 col-md-6">
+            <div class="p-3 bg-light rounded-3 h-100">
+              <div class="text-muted small mb-1">Saldo USD</div>
+              <div class="fw-bold">
+                {{ s.balance_usd | number:'1.2-2' }} / {{ s.balance_limit_usd | number:'1.2-2' }} USD
+              </div>
+              <div class="progress mt-2">
+                <div class="progress-bar" role="progressbar"
+                  [style.width.%]="dollarsPercent(s.balance_usd, s.balance_limit_usd)">
+                  {{ dollarsPercent(s.balance_usd, s.balance_limit_usd) | number:'1.0-0' }}%
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <div class="p-3 bg-light rounded-3 h-100">
+              <div class="text-muted small mb-1">Minutos</div>
+              <div class="fw-bold">
+                {{ s.minutes_remaining }} / {{ s.minutes_limit }}
+              </div>
+              <div class="progress mt-2">
+                <div class="progress-bar" role="progressbar"
+                  [style.width.%]="minutesPercent(s.minutes_remaining, s.minutes_limit)">
+                  {{ minutesPercent(s.minutes_remaining, s.minutes_limit) | number:'1.0-0' }}%
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #noData>
+        <div class="alert alert-secondary">No hay datos a mostrar.</div>
+      </ng-template>
+    </ng-template>
+  </div>
+</div>

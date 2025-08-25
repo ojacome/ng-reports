@@ -9,18 +9,23 @@ import { Header } from './components/header/header';
 import { Footer } from './components/footer/footer';
 import { SearchCard } from './components/search-card/search-card';
 import { UsageCard } from './components/usage-card/usage-card';
+import { BalanceCardComponent } from './components/balance-card/balance-card.component';
+import { SummaryService } from './services/summary.service';
 
 @Component({
     selector: 'app-root',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, NgIf, NgClass, DatePipe, BytesPipe, Header, Footer, SearchCard, UsageCard],
+    imports: [CommonModule, Header, Footer, SearchCard, UsageCard, BalanceCardComponent],
     templateUrl: './app.component.html',
 }) export class AppComponent {
     status$!: Observable<'closed' | 'opening' | 'open' | 'error'>; 
     current$!: Observable<Snapshot | null>;                   
     hasSearched = false;
 
-    constructor(private ws: WsUsageService) {
+    constructor(
+        private ws: WsUsageService,
+        private summary: SummaryService
+    ) {
         this.status$ = this.ws.status$;
         this.current$ = this.ws.current$;
     }
@@ -28,5 +33,6 @@ import { UsageCard } from './components/usage-card/usage-card';
     onSearch(phone: string) {
         this.hasSearched = true;
         this.ws.connect(phone);
+        this.summary.fetch(phone);
     }
 }
