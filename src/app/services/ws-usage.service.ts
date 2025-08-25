@@ -19,6 +19,7 @@ export class WsUsageService {
   
   connect(phone: string) {
     this.disconnect();
+    this.currentSubject.next(null);
 
     const base = environment.WS_BASE;
     const url = `${base}/ws/usage?phone_number=${encodeURIComponent(phone)}`;
@@ -43,7 +44,10 @@ export class WsUsageService {
     };
 
     this.socket.onerror = () => this.zone.run(() => this.statusSubject.next('error'));
-    this.socket.onclose  = () => this.zone.run(() => this.statusSubject.next('closed'));
+    this.socket.onclose  = () => this.zone.run(() => {
+      this.statusSubject.next('closed');
+      this.currentSubject.next(null);
+    });
   }
 
   disconnect() {
@@ -51,6 +55,8 @@ export class WsUsageService {
       this.socket.close();
     }
     this.socket = undefined;
+    
+    this.currentSubject.next(null);
     this.statusSubject.next('closed');
   }
 }

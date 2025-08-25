@@ -56,12 +56,7 @@
         </ng-container>
 
         <ng-template #noData>
-            <div *ngIf="hasSearched; else emptyState" class="alert alert-secondary mt-3">
-                No hay datos a mostrar.
-            </div>
-            <ng-template #emptyState>
-                <div class="text-muted">Busca un número para ver su consumo.</div>
-            </ng-template>
-        </ng-template>
+        <div class="alert alert-light">No hay datos a mostrar.</div>
+      </ng-template>
     </div>
 </div>
