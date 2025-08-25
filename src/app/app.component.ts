@@ -11,11 +11,13 @@ import { SearchCard } from './components/search-card/search-card';
 import { UsageCard } from './components/usage-card/usage-card';
 import { BalanceCardComponent } from './components/balance-card/balance-card.component';
 import { SummaryService } from './services/summary.service';
+import { BillingService } from './services/billing.service';
+import { BillingCardComponent } from './components/billing-card/billing-card.component';
 
 @Component({
     selector: 'app-root',
     standalone: true,
-    imports: [CommonModule, Header, Footer, SearchCard, UsageCard, BalanceCardComponent],
+    imports: [CommonModule, Header, Footer, SearchCard, UsageCard, BalanceCardComponent, BillingCardComponent],
     templateUrl: './app.component.html',
 }) export class AppComponent {
     status$!: Observable<'closed' | 'opening' | 'open' | 'error'>; 
@@ -24,7 +26,8 @@ import { SummaryService } from './services/summary.service';
 
     constructor(
         private ws: WsUsageService,
-        private summary: SummaryService
+        private summary: SummaryService,
+        private billing: BillingService
     ) {
         this.status$ = this.ws.status$;
         this.current$ = this.ws.current$;
@@ -34,5 +37,6 @@ import { SummaryService } from './services/summary.service';
         this.hasSearched = true;
         this.ws.connect(phone);
         this.summary.fetch(phone);
+        this.billing.fetch(phone);
     }
 }

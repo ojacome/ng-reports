@@ -1,0 +1,88 @@
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h5 class="card-title mb-3">Historial de facturas</h5>
+
+        <!-- Loading -->
+        <div *ngIf="billing.loading$ | async" class="d-flex align-items-center gap-2 text-muted">
+            <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
+            Cargando…
+        </div>
+
+        <!-- Datos / Sin datos -->
+        <ng-container *ngIf="(billing.items$ | async) as items">
+            <ng-container *ngIf="items.length > 0; else empty">
+                <!-- Encabezado: mostramos cliente y número una sola vez -->
+                <div class="mb-2">
+                    <strong>Cliente:</strong> {{ items[0].customer_name }}
+                </div>
+                <div class="mb-3">
+                    <strong>Número:</strong> {{ items[0].phone_number }}
+                </div>
+
+                <!-- Desktop: tabla -->
+                <div class="d-none d-md-block">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Periodo</th>
+                                    <th>Método</th>
+                                    <th class="text-end">Subtotal</th>
+                                    <th class="text-end">Impuesto</th>
+                                    <th class="text-end">Descuento</th>
+                                    <th class="text-end">Total pagado</th>
+                                    <th>Fecha de pago</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let i of items">
+                                    <td>{{ i.period }}</td>
+                                    <td><span class="badge" [ngClass]="badgeClass(i.payment_method)">
+                                            {{ badgeLabel(i.payment_method) }}
+                                        </span></td>
+                                    <td class="text-end">{{ i.total | currency:'USD':'symbol':'1.2-2' }}</td>
+                                    <td class="text-end">{{ i.tax | currency:'USD':'symbol':'1.2-2' }}</td>
+                                    <td class="text-end">{{ i.discount | currency:'USD':'symbol':'1.2-2' }}</td>
+                                    <td class="text-end fw-semibold">{{ totalPaid(i) | currency:'USD':'symbol':'1.2-2'
+                                        }}</td>
+                                    <td>{{ i.payment_date | date:'medium' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Mobile: cards -->
+                <div class="d-md-none">
+                    <div class="row g-3">
+                        <div class="col-12" *ngFor="let i of items">
+                            <div class="p-3 bg-light rounded-3">
+                                <div class="d-flex justify-content-between">
+                                    <div class="fw-semibold">Periodo {{ i.period }}</div>
+                                    <div class="fw-bold">{{ totalPaid(i) | currency:'USD':'symbol':'1.2-2' }}</div>
+                                </div>
+                                <div class="mt-1">
+                                    <span class="badge" [ngClass]="badgeClass(i.payment_method)">
+                                        {{ badgeLabel(i.payment_method) }}
+                                    </span>
+                                </div>
+                                <hr class="my-2" />
+                                <div class="small text-muted">Subtotal: {{ i.total | currency:'USD':'symbol':'1.2-2' }}
+                                </div>
+                                <div class="small text-muted">Impuesto: {{ i.tax | currency:'USD':'symbol':'1.2-2' }}
+                                </div>
+                                <div class="small text-muted">Descuento: {{ i.discount | currency:'USD':'symbol':'1.2-2'
+                                    }}</div>
+                                <div class="small">Pago: {{ i.payment_date | date:'medium' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+
+            <ng-template #empty>
+                <div class="alert alert-secondary mb-0">No hay datos a mostrar.</div>
+            </ng-template>
+        </ng-container>
+    </div>
+</div>
