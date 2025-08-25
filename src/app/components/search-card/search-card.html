@@ -1,0 +1,16 @@
+<form (ngSubmit)="submit()" [formGroup]="form" class="card shadow-sm">
+    <div class="card-body">
+        <label class="form-label">Número de teléfono</label>
+        <div class="input-group input-group-lg">
+            <input type="text" class="form-control" formControlName="phone" maxlength="10" inputmode="numeric"
+                (keydown)="allowOnlyDigits($event)" placeholder="Ej: 0969786985" />
+            <button class="btn btn-primary" type="submit">Buscar</button>
+        </div>
+
+        <div *ngIf="phoneCtrl.touched && phoneCtrl.invalid" class="text-danger mt-2 small">
+            Ingrese 10 dígitos numéricos.
+        </div>
+
+        <div class="text-muted small">Estado WS: {{ status }}</div>
+    </div>
+</form>

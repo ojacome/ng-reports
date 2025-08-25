@@ -1,0 +1,67 @@
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h5 class="card-title mb-3">Consumo de datos</h5>
+
+        <ng-container *ngIf="snapshot; else noData">
+            <div class="mb-2"><strong>Cliente:</strong> {{ snapshot.client_full_name }}</div>
+            <div class="mb-2"><strong>Número:</strong> {{ snapshot.phone_number }}</div>
+            <div class="mb-2"><strong>Plan:</strong> #{{ snapshot.plan_id }}</div>
+            <div class="mb-2"><strong>Límite:</strong> {{ snapshot.limit_bytes | bytes }}</div>
+            <div class="mb-2"><strong>Total consumido:</strong> {{ snapshot.total_bytes | bytes }}</div>
+            <div class="mb-2">
+                <strong>Vence:</strong> {{ snapshot.expiration_at | date:'medium' }}
+                <span *ngIf="snapshot.expired" class="badge text-bg-danger ms-2">VENCIDO</span>
+            </div>
+
+            <!-- Barra de progreso -->
+            <div class="mb-3">
+                <div class="progress" role="progressbar" [attr.aria-valuenow]="snapshot.percent | number:'1.0-0'"
+                    aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar" [style.width.%]="snapshot.percent" [ngClass]="{
+                     'bg-success': snapshot.percent < 60,
+                     'bg-warning': snapshot.percent >= 60 && snapshot.percent < 90,
+                     'bg-danger':  snapshot.percent >= 90
+                   }">
+                        {{ snapshot.percent | number:'1.0-2' }}%
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="p-3 bg-light rounded-3 h-100">
+                        <div class="text-muted small mb-1">Redes sociales</div>
+                        <div class="fw-bold">{{ snapshot.breakdown.used_social_bytes | bytes }}</div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="p-3 bg-light rounded-3 h-100">
+                        <div class="text-muted small mb-1">Entretenimiento</div>
+                        <div class="fw-bold">{{ snapshot.breakdown.used_entertainment_bytes | bytes }}</div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="p-3 bg-light rounded-3 h-100">
+                        <div class="text-muted small mb-1">Sistema/Actualizaciones</div>
+                        <div class="fw-bold">{{ snapshot.breakdown.used_system_updates_bytes | bytes }}</div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="p-3 bg-light rounded-3 h-100">
+                        <div class="text-muted small mb-1">Navegación/Búsqueda</div>
+                        <div class="fw-bold">{{ snapshot.breakdown.used_navigation_search_bytes | bytes }}</div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+
+        <ng-template #noData>
+            <div *ngIf="hasSearched; else emptyState" class="alert alert-secondary mt-3">
+                No hay datos a mostrar.
+            </div>
+            <ng-template #emptyState>
+                <div class="text-muted">Busca un número para ver su consumo.</div>
+            </ng-template>
+        </ng-template>
+    </div>
+</div>
